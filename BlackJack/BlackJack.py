@@ -2,21 +2,33 @@ import random
 import numpy as np
 
 
-def score(to_score):
+def best_result(result):
+    if(sum(result)+10<=21):
+        return sum(result)+10 #Soft 17 for crupier
+    else:
+        return sum(result)
 
-    result = list(map(lambda x: 10 if x in [0, 10, 11, 12] else x, to_score))
+
+
+def score(to_score,dic_score,who_is):
+
+    result = list(map(lambda x: 10 if x in [10, 11, 12, 0] else x, to_score))
 
     if(sum(list(map(lambda x: 11 if x == 1 else x, result))) == 21 and len(to_score)==2):
         print('BlackJack!')
-        return 21
+        dic_score[who_is] = 21
+    elif(1 in result):
+        dic_score[who_is] = best_result(result)
     else:
-        return sum(result)
+        dic_score[who_is] = sum(result)
+    
+    return None
 
     
 
 
 
-def player_hand(hand,isOpening=False):
+def player_hand(hand, dic_score, who_is, isOpening=False):
     """Shows each player hand and figures out score"""
     h =  '|' #hand
     
@@ -43,21 +55,24 @@ def player_hand(hand,isOpening=False):
         else:
             h+= "X|"
 
-    if 'X' not in h:
-        score(to_score)
+    #if 'X' not in h:
+     #   score(to_score)
 
-    print(h)
+    #print(h)
 
-    return score(to_score)
+    #return score(to_score)
+
+    score(to_score,dic_score,who_is)
+    return h
 
 
 
-def table(player,crupier, isOpening=False):
+def table(player,crupier, dic_score, isOpening=False):
     """Shows the table"""
     print("*"*50)
-    player_hand(crupier,isOpening)
+    print(player_hand(crupier, dic_score, 'crupier',isOpening=isOpening))
     print("\n")
-    player_hand(player)
+    print(player_hand(player, dic_score, 'player'))
     print("*"*50+"\n")
 
     return None
@@ -80,6 +95,9 @@ def run():
 
     cards_on_table = []
     cards_on_table.append(random.randint(1,52)) #first card
+    
+    dic_score = {'player': 0, 'crupier': 0} #to save scores
+    hand_score = 0
 
     for i in range(3): #Opening
         deck(cards_on_table)
@@ -87,30 +105,30 @@ def run():
     opening = np.array_split(cards_on_table,2)
     player = list(opening[0])
     crupier = list(opening[1])
-    table(player,crupier,True)
+    table(player,crupier, dic_score, True)
 
-    escor = 18
-    bj = '89'
 
-    while(player_hand(player)<21 and 'BlackJack' not in bj):
-        jugar = int(input('Wanna play?: '))
+    print(dic_score)
+
+    #player game
+    jugar = 1
+    while(dic_score['player']<21 and jugar==1):   
+        jugar = int(input("""Another card? \n 0: No \n 1: Yes \n"""))
         if(jugar == 1):
         
             card = deck(cards_on_table)
             player.append(cards_on_table[-1])
-            table(player,crupier,True)
-        escor = escor + 1
+            table(player,crupier,dic_score, True)
 
-    table(player,crupier) #Final player's table
-    
     #crupier's game
-
-    while(player_hand(crupier)<=16 and player_hand(crupier)<21):
+    while(dic_score['crupier']<=16 and dic_score['crupier']<21 and dic_score['player']<=21):
             card = deck(cards_on_table)
             crupier.append(cards_on_table[-1])       
-            table(player,crupier)  
+            table(player, crupier, dic_score)  
+    
 
     return None
 
 
 run()
+
