@@ -1,0 +1,7 @@
+services:
+  blackjack-game:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/blackjack

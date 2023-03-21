@@ -1,8 +1,29 @@
-import random
 import numpy as np
+import random
+
+def validation(dic_score):
+    """Defines who wins"""
+
+    if(dic_score['player']>21):
+        return 'You lose!'
+
+    elif(dic_score['crupier']>21):
+        return 'You win!'
+
+    else: 
+        if(dic_score['player']>dic_score['crupier']):
+            return 'You win!'
+        
+        elif(dic_score['player']==dic_score['crupier']):
+            return 'Push!'
+
+        else:
+            return 'You lose!'
+
 
 
 def best_result(result):
+    """Decides if A is 1 or 11"""
     if(sum(result)+10<=21):
         return sum(result)+10 #Soft 17 for crupier
     else:
@@ -11,6 +32,7 @@ def best_result(result):
 
 
 def score(to_score,dic_score,who_is):
+    """Counts cards value"""
 
     result = list(map(lambda x: 10 if x in [10, 11, 12, 0] else x, to_score))
 
@@ -23,8 +45,6 @@ def score(to_score,dic_score,who_is):
         dic_score[who_is] = sum(result)
     
     return None
-
-    
 
 
 
@@ -55,13 +75,6 @@ def player_hand(hand, dic_score, who_is, isOpening=False):
         else:
             h+= "X|"
 
-    #if 'X' not in h:
-     #   score(to_score)
-
-    #print(h)
-
-    #return score(to_score)
-
     score(to_score,dic_score,who_is)
     return h
 
@@ -89,46 +102,4 @@ def deck(cards_on_table):
 
     return cards_on_table
 
-
-
-def run():
-
-    cards_on_table = []
-    cards_on_table.append(random.randint(1,52)) #first card
-    
-    dic_score = {'player': 0, 'crupier': 0} #to save scores
-    hand_score = 0
-
-    for i in range(3): #Opening
-        deck(cards_on_table)
-
-    opening = np.array_split(cards_on_table,2)
-    player = list(opening[0])
-    crupier = list(opening[1])
-    table(player,crupier, dic_score, True)
-
-
-    print(dic_score)
-
-    #player game
-    jugar = 1
-    while(dic_score['player']<21 and jugar==1):   
-        jugar = int(input("""Another card? \n 0: No \n 1: Yes \n"""))
-        if(jugar == 1):
-        
-            card = deck(cards_on_table)
-            player.append(cards_on_table[-1])
-            table(player,crupier,dic_score, True)
-
-    #crupier's game
-    while(dic_score['crupier']<=16 and dic_score['crupier']<21 and dic_score['player']<=21):
-            card = deck(cards_on_table)
-            crupier.append(cards_on_table[-1])       
-            table(player, crupier, dic_score)  
-    
-
-    return None
-
-
-run()
 
