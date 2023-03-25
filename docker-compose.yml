@@ -1,7 +1,8 @@
 services:
-  blackjack-game:
+  casino-game:
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - .:/blackjack
+      - .:/BlackJack
+      - .:/Roulette
